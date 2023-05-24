@@ -1,7 +1,11 @@
 package br.com.eduardo.screenmatch.models;
 
+import br.com.eduardo.screenmatch.exception.ConversionErrorException;
+import com.google.gson.annotations.SerializedName;
+
 public class Title implements Comparable<Title> {
     private String name;
+    @SerializedName("Year")
     private int releaseYear;
     private boolean includedInPlan;
     private double sumOfRatings;
@@ -13,6 +17,17 @@ public class Title implements Comparable<Title> {
         this.releaseYear = releaseYear;
     }
 
+    public Title(TitleOmdb myTitleOmdb) {
+
+        if (myTitleOmdb.year().length() > 4) {
+            throw new ConversionErrorException("The conversion was not done because the year has more than 04 characters.");
+        }
+
+        this.name = myTitleOmdb.title();
+        this.releaseYear = Integer.parseInt(myTitleOmdb.year());
+        this.durationInMinutes = Integer.parseInt(myTitleOmdb.runtime().substring(0, 2));
+    }
+
     public void displayTechnicalInformation() {
         System.out.println("Name of the title: " + name);
         System.out.println("Release year: " + releaseYear);
@@ -21,6 +36,11 @@ public class Title implements Comparable<Title> {
     public void rate(double rating) {
         sumOfRatings += rating;
         numberOfRatings++;
+    }
+
+    @Override
+    public String toString() {
+        return "(Name: " + name + ", Release year: " + releaseYear + ", Runtime: " + durationInMinutes + ")";
     }
 
     @Override
